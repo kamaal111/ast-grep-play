@@ -1,0 +1,5 @@
+id: joi-string-to-zod
+language: TypeScript
+rule:
+    pattern: Joi.string()
+fix: z.string()
