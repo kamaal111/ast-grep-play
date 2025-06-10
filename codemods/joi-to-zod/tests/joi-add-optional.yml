@@ -1,7 +1,0 @@
-id: joi-add-optional
-invalid:
-  - joi.number().min(5)
-  - |
-    Joi
-      .number()
-      .max(55)

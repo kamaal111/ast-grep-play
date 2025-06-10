@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "codemod": "ast-grep scan -U -c codemods/joi-to-zod/sgconfig.yml tests/resources/**.ts",
+    "codemod": "ast-grep scan --update-all -c codemods/joi-to-zod/sgconfig.yml tests/resources/**.ts",
+    "codemod:i": "ast-grep scan --interactive -c codemods/joi-to-zod/sgconfig.yml tests/resources/**.ts",
     "codemod:dry": "ast-grep scan -c codemods/joi-to-zod/sgconfig.yml tests/resources/**.ts",
     "test": "ast-grep test -c codemods/joi-to-zod/sgconfig.yml",
     "test:no-snap": "pnpm run test --skip-snapshot-tests",

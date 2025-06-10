@@ -9,6 +9,10 @@ default:
 run:
     {{ PNR }} codemod
 
+# Run codemods interactively
+run-i:
+    {{ PNR }} codemod:i
+
 # Run codemods in dry mode
 run-dry:
     {{ PNR }} codemod:dry

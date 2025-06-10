@@ -5,6 +5,7 @@ rule:
     - matches: has-joi-import
     - inside:
         kind: program
-        has:
-          matches: has-zod-import
-fix: ""
+        not:
+          has:
+            matches: has-zod-import
+fix: import z from "zod"
