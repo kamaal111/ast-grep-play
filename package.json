@@ -5,6 +5,9 @@
   "main": "index.js",
   "scripts": {
     "codemod": "ast-grep scan -c codemods/joi-to-zod/sgconfig.yml tests/resources/**.ts",
+    "test": "ast-grep test -c codemods/joi-to-zod/sgconfig.yml",
+    "test:no-snap": "pnpm run test --skip-snapshot-tests",
+    "test:snap-i": "pnpm run test --interactive",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "prepare": "husky"

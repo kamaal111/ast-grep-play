@@ -1,0 +1,6 @@
+id: joi-import-to-zod
+valid:
+  - import z from 'zod'
+invalid:
+  - import Joi from 'joi'
+  - import Joi from "joi"

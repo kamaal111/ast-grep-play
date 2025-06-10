@@ -1,0 +1,16 @@
+id: joi-import-to-zod
+snapshots:
+  import Joi from "joi":
+    fixed: import z from "zod"
+    labels:
+      - source: import Joi from "joi"
+        style: primary
+        start: 0
+        end: 21
+  import Joi from 'joi':
+    fixed: import z from "zod"
+    labels:
+      - source: import Joi from 'joi'
+        style: primary
+        start: 0
+        end: 21

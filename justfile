@@ -9,6 +9,18 @@ default:
 run:
     {{ PNR }} codemod
 
+# Test codemods
+test:
+    {{ PNR }} test
+
+# Test codemods and add snapshots interactively
+test-snap-i:
+    {{ PNR }} test:snap-i
+
+# Test codemods with snapshots skipped
+test-no-snap:
+    {{ PNR }} test:no-snap
+
 # Format code
 format:
     {{ PNR }} format
@@ -27,22 +39,6 @@ install-modules:
 
 # Bootstrap project
 bootstrap: install-node enable-corepack install-modules
-
-# Set up dev container. This step runs after building the dev container
-[linux]
-post-dev-container-create:
-    just .devcontainer/post-create
-    just bootstrap
-
-# Bootstrap for CI
-[linux]
-bootstrap-ci: install-zsh enable-corepack install-modules
-
-[private]
-[linux]
-install-zsh:
-    sudo apt-get update
-    sudo apt-get install -y zsh
 
 [private]
 install-node:
