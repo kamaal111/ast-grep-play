@@ -1,0 +1,5 @@
+id: joi-required-remove
+language: TypeScript
+rule:
+  pattern: $SCHEMA.required()
+fix: $SCHEMA

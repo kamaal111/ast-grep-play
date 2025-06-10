@@ -1,7 +1,5 @@
 id: joi-import-to-zod
 language: TypeScript
 rule:
-  any:
-    - pattern: import $J from 'joi'
-    - pattern: import $J from "joi"
+  matches: is-joi-import
 fix: import z from "zod"

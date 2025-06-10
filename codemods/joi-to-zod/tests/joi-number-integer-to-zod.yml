@@ -1,0 +1,7 @@
+id: joi-number-integer-to-zod
+invalid:
+  - Joi.number().integer().min(MINIMUM_YEAR).max(MAX_YEAR)
+  - |
+    Joi
+      .number()
+      .integer()

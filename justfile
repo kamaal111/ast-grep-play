@@ -9,6 +9,10 @@ default:
 run:
     {{ PNR }} codemod
 
+# Run codemods in dry mode
+run-dry:
+    {{ PNR }} codemod:dry
+
 # Test codemods
 test:
     {{ PNR }} test

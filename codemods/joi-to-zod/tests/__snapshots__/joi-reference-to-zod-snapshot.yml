@@ -1,0 +1,24 @@
+id: joi-reference-to-zod
+snapshots:
+  ? |
+    import Joi from 'joi';
+    const schema = Joi.object();
+  : fixed: |
+      import Joi from 'joi';
+      const schema = z.object();
+    labels:
+    - source: Joi.object()
+      style: primary
+      start: 38
+      end: 50
+  ? |
+    import Joi from 'joi';
+    const schema = Joi.string();
+  : fixed: |
+      import Joi from 'joi';
+      const schema = z.string();
+    labels:
+    - source: Joi.string()
+      style: primary
+      start: 38
+      end: 50

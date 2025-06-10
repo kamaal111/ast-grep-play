@@ -1,0 +1,9 @@
+id: joi-required-remove
+snapshots:
+  Joi.string().alphanum().min(3).max(30).required():
+    fixed: Joi.string().alphanum().min(3).max(30)
+    labels:
+    - source: Joi.string().alphanum().min(3).max(30).required()
+      style: primary
+      start: 0
+      end: 49

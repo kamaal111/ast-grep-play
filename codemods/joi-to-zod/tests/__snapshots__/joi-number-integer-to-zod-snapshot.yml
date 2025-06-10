@@ -1,0 +1,23 @@
+id: joi-number-integer-to-zod
+snapshots:
+  ? |
+    Joi
+      .number()
+      .integer()
+  : fixed: |
+      z.number().int()
+    labels:
+    - source: |-
+        Joi
+          .number()
+          .integer()
+      style: primary
+      start: 0
+      end: 28
+  Joi.number().integer().min(MINIMUM_YEAR).max(MAX_YEAR):
+    fixed: z.number().int().min(MINIMUM_YEAR).max(MAX_YEAR)
+    labels:
+    - source: Joi.number().integer()
+      style: primary
+      start: 0
+      end: 22

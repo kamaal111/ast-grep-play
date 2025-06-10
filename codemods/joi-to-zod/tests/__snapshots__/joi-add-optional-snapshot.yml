@@ -1,0 +1,36 @@
+id: joi-add-optional
+snapshots:
+  ? |
+    Joi
+      .number()
+      .max(55)
+  : fixed: |
+      Joi
+        .number()
+        .max(55).optional()
+    labels:
+    - source: |-
+        Joi
+          .number()
+          .max(55)
+      style: primary
+      start: 0
+      end: 26
+    - source: |-
+        Joi
+          .number()
+          .max
+      style: secondary
+      start: 0
+      end: 22
+  joi.number().min(5):
+    fixed: joi.number().min(5).optional()
+    labels:
+    - source: joi.number().min(5)
+      style: primary
+      start: 0
+      end: 19
+    - source: joi.number().min
+      style: secondary
+      start: 0
+      end: 16

@@ -1,0 +1,3 @@
+id: joi-required-remove
+invalid:
+  - Joi.string().alphanum().min(3).max(30).required()

@@ -1,0 +1,15 @@
+id: joi-reference-to-zod
+valid:
+  - |
+    import z from 'zod';
+    const schema = z.string();
+  - |
+    import z from 'zod';
+    const schema = z.object();
+invalid:
+  - |
+    import Joi from 'joi';
+    const schema = Joi.string();
+  - |
+    import Joi from 'joi';
+    const schema = Joi.object();
