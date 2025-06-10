@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "codemod": "ast-grep scan -U -c configs/joi-to-zod-sgconfig.yml tests/resources/**.ts",
+    "codemod": "ast-grep scan -c codemods/joi-to-zod/sgconfig.yml tests/resources/**.ts",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "prepare": "husky"

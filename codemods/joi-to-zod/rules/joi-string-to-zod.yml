@@ -1,5 +1,5 @@
 id: joi-string-to-zod
 language: TypeScript
 rule:
-    pattern: $J.string()
+  pattern: $J.string()
 fix: z.string()
