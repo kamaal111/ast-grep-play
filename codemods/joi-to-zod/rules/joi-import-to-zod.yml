@@ -1,5 +1,0 @@
-id: joi-import-to-zod
-language: TypeScript
-rule:
-  matches: is-joi-import
-fix: import z from "zod"

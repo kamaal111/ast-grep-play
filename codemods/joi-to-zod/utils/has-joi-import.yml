@@ -1,4 +1,4 @@
-id: is-joi-import
+id: has-joi-import
 language: TypeScript
 rule:
   any:

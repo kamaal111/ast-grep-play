@@ -1,5 +1,4 @@
 import Joi from 'joi';
-import z from 'zod';
 
 import { MAX_YEAR } from './other-source';
 
@@ -21,13 +20,4 @@ export const employee = Joi.object().keys({
     .max(20)
     .description('Nickname')
     .regex(/^[a-z]+$/, { name: 'alpha', invert: true }),
-});
-
-export const zEmployee = z.object({
-  name: z
-    .string()
-    .regex(/^[a-z0-9]+$/)
-    .min(3)
-    .max(30),
-  birthyear: z.number().int().min(MINIMUM_YEAR).max(MAX_YEAR).optional(),
 });

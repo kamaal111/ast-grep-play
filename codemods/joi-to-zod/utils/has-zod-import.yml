@@ -1,0 +1,10 @@
+id: has-zod-import
+language: TypeScript
+rule:
+  any:
+    - pattern: import $Z from 'zod'
+    - pattern: import $Z from "zod"
+    - pattern: import { $$$IMPORTS } from 'zod'
+    - pattern: import { $$$IMPORTS } from "zod"
+    - pattern: import * as $Z from 'zod'
+    - pattern: import * as $Z from "zod"

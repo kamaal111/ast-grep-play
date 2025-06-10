@@ -1,5 +1,5 @@
 id: joi-reference-to-zod
 language: TypeScript
 rule:
-  pattern: Joi.$METHOD($$$ARGS)
-fix: z.$METHOD($$$ARGS)
+  pattern: Joi.$METHOD()
+fix: z.$METHOD()

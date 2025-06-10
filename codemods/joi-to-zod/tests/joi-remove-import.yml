@@ -1,0 +1,12 @@
+id: joi-remove-import
+valid:
+  - const x = 1
+  - import Joi from 'joi'
+  - import z from 'zod'
+invalid:
+  - |
+    import Joi from 'joi';
+    import z from 'zod';
+  - |
+    import Joi from "joi";
+    import z from "zod";
