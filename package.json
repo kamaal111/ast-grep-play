@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "codemod": "ast-grep scan -c configs/joi-to-zod-sgconfig.yml tests/resources/**.ts",
+    "codemod": "ast-grep scan -U -c configs/joi-to-zod-sgconfig.yml tests/resources/**.ts",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "prepare": "husky"
@@ -12,7 +12,7 @@
   "keywords": [],
   "author": "Kamaal Farah",
   "license": "ISC",
-  "packageManager": "pnpm@10.11.1",
+  "packageManager": "pnpm@10.12.1",
   "dependencies": {
     "@ast-grep/lang-typescript": "^0.0.2",
     "@ast-grep/napi": "^0.38.4"
@@ -23,7 +23,8 @@
     "husky": "^9.1.7",
     "joi": "^17.13.3",
     "lint-staged": "^16.1.0",
-    "prettier": "^3.5.3"
+    "prettier": "^3.5.3",
+    "zod": "^3.25.57"
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"
