@@ -25,10 +25,13 @@
   "devDependencies": {
     "@ast-grep/cli": "^0.38.4",
     "@kamaalio/prettier-config": "^0.1.2",
+    "@types/node": "^24.0.0",
     "husky": "^9.1.7",
     "joi": "^17.13.3",
     "lint-staged": "^16.1.0",
     "prettier": "^3.5.3",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3",
     "zod": "^3.25.57"
   },
   "lint-staged": {

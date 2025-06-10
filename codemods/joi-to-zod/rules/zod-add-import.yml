@@ -1,4 +1,4 @@
-id: joi-remove-import
+id: joi-add-import
 language: TypeScript
 rule:
   all:

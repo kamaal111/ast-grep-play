@@ -1,3 +1,4 @@
 onlyBuiltDependencies:
   - '@ast-grep/cli'
   - '@ast-grep/lang-typescript'
+  - esbuild
