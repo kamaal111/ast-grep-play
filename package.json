@@ -20,7 +20,8 @@
   "packageManager": "pnpm@10.12.1",
   "dependencies": {
     "@ast-grep/lang-typescript": "^0.0.2",
-    "@ast-grep/napi": "^0.38.4"
+    "@ast-grep/napi": "^0.38.4",
+    "fast-glob": "^3.3.3"
   },
   "devDependencies": {
     "@ast-grep/cli": "^0.38.4",

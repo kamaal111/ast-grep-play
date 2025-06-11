@@ -1,10 +1,13 @@
-import fs from 'node:fs/promises';
+import { Lang } from '@ast-grep/napi';
 
-import joiToZod from './joi-to-zod';
+import joiToZodTransformer from './joi-to-zod';
+import { parseAndTransformFiles } from './utils';
 
 async function main() {
-  const content = await fs.readFile('tests/resources/joi-imports.ts', { encoding: 'utf-8' });
-  await joiToZod(content);
+  const start = performance.now();
+  await parseAndTransformFiles('tests/resources/**.ts', Lang.TypeScript, joiToZodTransformer);
+  const end = performance.now();
+  console.log(`✨ transformation took ${(end - start).toFixed(2)} milliseconds`);
 }
 
 main();
