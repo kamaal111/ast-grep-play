@@ -8,7 +8,7 @@ import type { Modifications } from './types';
 export async function parseAndTransformFiles(
   globPattern: string,
   lang: NapiLang,
-  transformer: (lang: NapiLang, content: string) => Promise<Modifications>,
+  transformer: (lang: NapiLang, content: string, filename: string) => Promise<Modifications>,
 ): Promise<void> {
   const targets = await fg.glob(globPattern);
   const transformerName = transformer.name
@@ -23,7 +23,7 @@ export async function parseAndTransformFiles(
     targets.map(async filepath => {
       try {
         const content = await fs.readFile(filepath, { encoding: 'utf-8' });
-        const { ast, report } = await transformer(lang, content);
+        const { ast, report } = await transformer(lang, content, filepath);
         if (report.changesApplied > 0) {
           await fs.writeFile(filepath, ast.root().text());
         }
