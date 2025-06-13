@@ -3,9 +3,9 @@ import fs from 'node:fs/promises';
 import type { NapiLang } from '@ast-grep/napi/types/lang';
 import fg from 'fast-glob';
 
-import type { Modifications } from './types';
+import type { Modifications } from '../types';
 
-export async function parseAndTransformFiles(
+async function parseAndTransformFiles(
   globPattern: string,
   lang: NapiLang,
   transformer: (lang: NapiLang, content: string, filename: string) => Promise<Modifications>,
@@ -34,3 +34,5 @@ export async function parseAndTransformFiles(
     }),
   );
 }
+
+export default parseAndTransformFiles;

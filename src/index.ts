@@ -1,7 +1,7 @@
 import { Lang } from '@ast-grep/napi';
 
 import joiToZodTransformer from './joi-to-zod';
-import { parseAndTransformFiles } from './utils';
+import parseAndTransformFiles from './utils/parse-and-transform-files';
 
 async function main() {
   const start = performance.now();

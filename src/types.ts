@@ -10,4 +10,5 @@ export type Modifications = {
   report: ModificationsReport;
   lang: NapiLang;
   filename: Optional<string>;
+  history: Array<SgRoot<TypesMap>>;
 };
