@@ -1,1 +1,1 @@
-export type JoiPrimitives = 'string' | '*';
+export type JoiPrimitives = 'string' | 'number' | '*';
