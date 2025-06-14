@@ -9,6 +9,7 @@ import hasJoiImport from './utils/has-joi-import';
 import joiRemoveRequired from './rules/joi-remove-required';
 import joiNumberIntegerToZod from './rules/joi-number-integer-to-zod';
 import joiDescriptionToZod from './rules/joi-description-to-zod';
+import joiReferenceToZod from './rules/joi-reference-to-zod';
 
 export async function joiToZodModifications(modifications: Modifications): Promise<Modifications> {
   if (!hasJoiImport(modifications.ast.root())) return modifications;
@@ -17,7 +18,8 @@ export async function joiToZodModifications(modifications: Modifications): Promi
     .then(joiStringAlphanumToRegex)
     .then(joiNumberIntegerToZod)
     .then(joiDescriptionToZod)
-    .then(joiRemoveRequired);
+    .then(joiRemoveRequired)
+    .then(joiReferenceToZod);
 }
 
 export async function joiToZod(lang: NapiLang, ast: SgRoot<TypesMap>): Promise<SgRoot<TypesMap>> {

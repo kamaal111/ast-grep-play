@@ -16,74 +16,93 @@ function replaceJoiValidationWithZodEdits(
   const validationTargetKeyComponents = params.validationTargetKey.split('(');
   const validationTargetKeyName = validationTargetKeyComponents[0];
   const validationTargetKeyArgs = validationTargetKeyComponents.slice(1).join('').slice(undefined, -1);
-  const validationTargetKeyArgsIsMeta = validationTargetKeyArgs.startsWith('$');
 
+  return root
+    .findAll({ rule: { kind: 'property_identifier' } })
+    .filter(propertyIdentifier => propertyIdentifier.text() === validationTargetKeyName)
+    .map(
+      makePropertyIdentifierReplacement({
+        joiImportIdentifierName,
+        params,
+        validationTargetKeyName,
+        validationTargetKeyArgs,
+      }),
+    )
+    .filter(edit => edit != null);
+}
+
+function makePropertyIdentifierReplacement({
+  joiImportIdentifierName,
+  params,
+  validationTargetKeyName,
+  validationTargetKeyArgs,
+}: {
+  joiImportIdentifierName: string;
+  params: { primitive: JoiPrimitives; validationTargetKey: string; zodValidation: Optional<string> };
+  validationTargetKeyName: string;
+  validationTargetKeyArgs: string;
+}) {
+  const validationTargetKeyArgsIsMeta = validationTargetKeyArgs.startsWith('$');
   const shouldRemoveValidation = params.zodValidation == null;
   let zodReplacement = shouldRemoveValidation ? '' : `.${params.zodValidation}`;
   const zodReplacementComponents = zodReplacement.split('(');
   const zodReplacementName = zodReplacementComponents[0];
   const zodReplacementArgs = zodReplacementComponents.slice(1).join('').slice(undefined, -1);
 
-  return root
-    .findAll({ rule: { kind: 'property_identifier' } })
-    .filter(propertyIdentifier => propertyIdentifier.text() === validationTargetKeyName)
-    .map(alphanumIdentifier => {
-      const pairNode = traverseUp(alphanumIdentifier, node => node.kind() === 'pair');
-      if (pairNode == null) return null;
+  return (identifier: SgNode<TypesMap, Kinds<TypesMap>>) => {
+    const pairNode = traverseUp(identifier, node => node.kind() === 'pair');
+    if (pairNode == null) return null;
 
-      const memberExpression = pairNode.find({ rule: { kind: 'member_expression' } });
-      if (memberExpression == null) return null;
+    const memberExpression = pairNode.find({ rule: { kind: 'member_expression' } });
+    if (memberExpression == null) return null;
 
-      const memberExpressionText = memberExpression.text().trim();
-      if (
-        !memberExpressionText.startsWith(joiImportIdentifierName) &&
-        (!memberExpressionText.includes(`.${params.primitive}()`) || params.primitive !== '*')
-      ) {
-        return null;
-      }
+    const memberExpressionText = memberExpression.text().trim();
+    if (
+      !memberExpressionText.startsWith(joiImportIdentifierName) &&
+      (!memberExpressionText.includes(`.${params.primitive}()`) || params.primitive !== '*')
+    ) {
+      return null;
+    }
 
-      const callExpression = memberExpression.parent();
-      if (callExpression == null) return null;
-      if (callExpression.kind() !== 'call_expression') throw new Error('Unexpected kind found');
+    const callExpression = memberExpression.parent();
+    if (callExpression == null) return null;
+    if (callExpression.kind() !== 'call_expression') throw new Error('Unexpected kind found');
 
-      const callExpressionText = callExpression.text();
+    const callExpressionText = callExpression.text();
 
-      let finalValidationTargetKeyArgs = validationTargetKeyArgs;
-      let finalZodReplacementArgs = zodReplacementArgs;
-      if (validationTargetKeyArgsIsMeta) {
-        const argumentsComponents = callExpressionText
-          .split('.')
-          .find(value => value.trim().startsWith(validationTargetKeyName))
-          ?.split('(');
-        if (argumentsComponents != null) {
-          const foundArguments = argumentsComponents[1]?.split(')')[0];
-          if (foundArguments != null) {
-            if (validationTargetKeyArgs === zodReplacementArgs) {
-              finalZodReplacementArgs = foundArguments;
-            }
-
-            finalValidationTargetKeyArgs = foundArguments;
+    let finalValidationTargetKeyArgs = validationTargetKeyArgs;
+    let finalZodReplacementArgs = zodReplacementArgs;
+    if (validationTargetKeyArgsIsMeta) {
+      const argumentsComponents = callExpressionText
+        .split('.')
+        .find(value => value.trim().startsWith(validationTargetKeyName))
+        ?.split('(');
+      if (argumentsComponents != null) {
+        const foundArguments = argumentsComponents[1]?.split(')')[0];
+        if (foundArguments != null) {
+          if (validationTargetKeyArgs === zodReplacementArgs) {
+            finalZodReplacementArgs = foundArguments;
           }
+
+          finalValidationTargetKeyArgs = foundArguments;
         }
       }
-      const finalValidationTargetKey = new RegExp(
-        `.${validationTargetKeyName}\\(${finalValidationTargetKeyArgs}\\)`,
-        'g',
-      );
-      const finalZodReplacement = shouldRemoveValidation
-        ? ''
-        : `${zodReplacementName}(${finalValidationTargetKeyArgs})`;
+    }
+    const finalValidationTargetKey = new RegExp(
+      `.${validationTargetKeyName}\\(${finalValidationTargetKeyArgs}\\)`,
+      'g',
+    );
+    const finalZodReplacement = shouldRemoveValidation ? '' : `${zodReplacementName}(${finalZodReplacementArgs})`;
 
-      const replacement = callExpressionText
-        .replace(finalValidationTargetKey, finalZodReplacement)
-        .split('\n')
-        .filter(value => value.trim().length > 0)
-        .join('\n')
-        .trim();
+    const replacement = callExpressionText
+      .replace(finalValidationTargetKey, finalZodReplacement)
+      .split('\n')
+      .filter(value => value.trim().length > 0)
+      .join('\n')
+      .trim();
 
-      return callExpression.replace(replacement);
-    })
-    .filter(edit => edit != null);
+    return callExpression.replace(replacement);
+  };
 }
 
 export default replaceJoiValidationWithZodEdits;
