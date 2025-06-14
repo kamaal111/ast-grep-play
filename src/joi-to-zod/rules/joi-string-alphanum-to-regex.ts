@@ -6,7 +6,7 @@ async function joiStringAlphanumToRegex(modifications: Modifications): Promise<M
   const root = modifications.ast.root();
   const edits = replaceJoiValidationWithZodEdits(root, {
     primitive: 'string',
-    validationTargetKey: 'alphanum',
+    validationTargetKey: 'alphanum()',
     zodValidation: 'regex(/^[a-z0-9]+$/)',
   });
 

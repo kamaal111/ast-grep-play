@@ -6,11 +6,12 @@ import zodAddImport from './rules/zod-add-import';
 import type { Modifications, Optional } from '../types';
 import joiStringAlphanumToRegex from './rules/joi-string-alphanum-to-regex';
 import hasJoiImport from './utils/has-joi-import';
+import joiRemoveRequired from './rules/joi-remove-required';
 
 export async function joiToZodModifications(modifications: Modifications): Promise<Modifications> {
   if (!hasJoiImport(modifications.ast.root())) return modifications;
 
-  return zodAddImport(modifications).then(joiStringAlphanumToRegex);
+  return zodAddImport(modifications).then(joiStringAlphanumToRegex).then(joiRemoveRequired);
 }
 
 export async function joiToZod(lang: NapiLang, ast: SgRoot<TypesMap>): Promise<SgRoot<TypesMap>> {

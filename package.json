@@ -7,7 +7,7 @@
     "codemod": "ast-grep scan --update-all -c codemods/joi-to-zod/sgconfig.yml tests/resources/**.ts",
     "codemod:i": "ast-grep scan --interactive -c codemods/joi-to-zod/sgconfig.yml tests/resources/**.ts",
     "codemod:dry": "ast-grep scan -c codemods/joi-to-zod/sgconfig.yml tests/resources/**.ts",
-    "test": "ast-grep test -c codemods/joi-to-zod/sgconfig.yml",
+    "test": "vitest run",
     "test:no-snap": "pnpm run test --skip-snapshot-tests",
     "test:snap-i": "pnpm run test --interactive",
     "format": "prettier . --write",
@@ -33,6 +33,7 @@
     "prettier": "^3.5.3",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3",
+    "vitest": "^3.2.3",
     "zod": "^3.25.57"
   },
   "lint-staged": {

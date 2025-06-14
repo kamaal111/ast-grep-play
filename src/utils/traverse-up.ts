@@ -7,18 +7,22 @@ function traverseUp(
   node: SgNode<TypesMap, Kinds<TypesMap>>,
   until: (node: SgNode<TypesMap, Kinds<TypesMap>>) => boolean,
 ): Optional<SgNode<TypesMap, Kinds<TypesMap>>> {
-  let parent = node.parent();
-  if (parent == null) return null;
+  let current = node.parent();
+  if (current == null) return null;
 
-  while (parent != null) {
-    const next: SgNode<TypesMap, Kinds<TypesMap>> | null = parent.parent();
+  while (current != null) {
+    const next: SgNode<TypesMap, Kinds<TypesMap>> | null = current.parent();
     if (next == null) break;
-    if (until(next)) break;
+    if (until(next)) {
+      current = next;
+      break;
+    }
 
-    parent = next;
+    current = next;
   }
 
-  return parent;
+  if (!until(current)) return null;
+  return current;
 }
 
 export default traverseUp;
