@@ -8,11 +8,16 @@ import joiStringAlphanumToRegex from './rules/joi-string-alphanum-to-regex';
 import hasJoiImport from './utils/has-joi-import';
 import joiRemoveRequired from './rules/joi-remove-required';
 import joiNumberIntegerToZod from './rules/joi-number-integer-to-zod';
+import joiDescriptionToZod from './rules/joi-description-to-zod';
 
 export async function joiToZodModifications(modifications: Modifications): Promise<Modifications> {
   if (!hasJoiImport(modifications.ast.root())) return modifications;
 
-  return zodAddImport(modifications).then(joiStringAlphanumToRegex).then(joiNumberIntegerToZod).then(joiRemoveRequired);
+  return zodAddImport(modifications)
+    .then(joiStringAlphanumToRegex)
+    .then(joiNumberIntegerToZod)
+    .then(joiDescriptionToZod)
+    .then(joiRemoveRequired);
 }
 
 export async function joiToZod(lang: NapiLang, ast: SgRoot<TypesMap>): Promise<SgRoot<TypesMap>> {

@@ -16,6 +16,14 @@ function replaceJoiValidationWithZodEdits(
   const validationTargetKeyComponents = params.validationTargetKey.split('(');
   const validationTargetKeyName = validationTargetKeyComponents[0];
   const validationTargetKeyArgs = validationTargetKeyComponents.slice(1).join('').slice(undefined, -1);
+  const validationTargetKeyArgsIsMeta = validationTargetKeyArgs.startsWith('$');
+
+  const shouldRemoveValidation = params.zodValidation == null;
+  let zodReplacement = shouldRemoveValidation ? '' : `.${params.zodValidation}`;
+  const zodReplacementComponents = zodReplacement.split('(');
+  const zodReplacementName = zodReplacementComponents[0];
+  const zodReplacementArgs = zodReplacementComponents.slice(1).join('').slice(undefined, -1);
+
   return root
     .findAll({ rule: { kind: 'property_identifier' } })
     .filter(propertyIdentifier => propertyIdentifier.text() === validationTargetKeyName)
@@ -38,12 +46,36 @@ function replaceJoiValidationWithZodEdits(
       if (callExpression == null) return null;
       if (callExpression.kind() !== 'call_expression') throw new Error('Unexpected kind found');
 
-      const replacement = callExpression
-        .text()
-        .replace(
-          new RegExp(`.${validationTargetKeyName}\\(${validationTargetKeyArgs}\\)`, 'g'),
-          params.zodValidation != null ? `.${params.zodValidation}` : '',
-        )
+      const callExpressionText = callExpression.text();
+
+      let finalValidationTargetKeyArgs = validationTargetKeyArgs;
+      let finalZodReplacementArgs = zodReplacementArgs;
+      if (validationTargetKeyArgsIsMeta) {
+        const argumentsComponents = callExpressionText
+          .split('.')
+          .find(value => value.trim().startsWith(validationTargetKeyName))
+          ?.split('(');
+        if (argumentsComponents != null) {
+          const foundArguments = argumentsComponents[1]?.split(')')[0];
+          if (foundArguments != null) {
+            if (validationTargetKeyArgs === zodReplacementArgs) {
+              finalZodReplacementArgs = foundArguments;
+            }
+
+            finalValidationTargetKeyArgs = foundArguments;
+          }
+        }
+      }
+      const finalValidationTargetKey = new RegExp(
+        `.${validationTargetKeyName}\\(${finalValidationTargetKeyArgs}\\)`,
+        'g',
+      );
+      const finalZodReplacement = shouldRemoveValidation
+        ? ''
+        : `${zodReplacementName}(${finalValidationTargetKeyArgs})`;
+
+      const replacement = callExpressionText
+        .replace(finalValidationTargetKey, finalZodReplacement)
         .split('\n')
         .filter(value => value.trim().length > 0)
         .join('\n')
