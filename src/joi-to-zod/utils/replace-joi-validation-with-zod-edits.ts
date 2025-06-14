@@ -34,7 +34,12 @@ function replaceJoiValidationWithZodEdits(
         return null;
       }
 
-      const replacement = memberExpressionText
+      const callExpression = memberExpression.parent();
+      if (callExpression == null) return null;
+      if (callExpression.kind() !== 'call_expression') throw new Error('Unexpected kind found');
+
+      const replacement = callExpression
+        .text()
         .replace(
           new RegExp(`.${validationTargetKeyName}\\(${validationTargetKeyArgs}\\)`, 'g'),
           params.zodValidation != null ? `.${params.zodValidation}` : '',
@@ -44,7 +49,7 @@ function replaceJoiValidationWithZodEdits(
         .join('\n')
         .trim();
 
-      return memberExpression.replace(replacement);
+      return callExpression.replace(replacement);
     })
     .filter(edit => edit != null);
 }
