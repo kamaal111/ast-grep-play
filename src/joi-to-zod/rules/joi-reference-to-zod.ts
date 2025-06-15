@@ -1,10 +1,10 @@
 import type { Modifications } from '../../types';
 import commitEditModifications from '../../utils/commit-edit-modifications';
-import getJoiImport, { JOI_IMPORT_META_IDENTIFIER } from '../utils/get-joi-import';
+import getJoiIdentifierName from '../utils/get-joi-identifier-name';
 
 async function joiReferenceToZod(modifications: Modifications): Promise<Modifications> {
   const root = modifications.ast.root();
-  const joiImportIdentifierName = getJoiImport(root)?.getMatch(JOI_IMPORT_META_IDENTIFIER)?.text();
+  const joiImportIdentifierName = getJoiIdentifierName(root);
   if (joiImportIdentifierName == null) return modifications;
 
   const edits = root

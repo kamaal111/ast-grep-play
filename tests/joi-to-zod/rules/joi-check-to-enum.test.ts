@@ -3,7 +3,7 @@ import { Lang, parseAsync } from '@ast-grep/napi';
 
 import joiCheckToEnum from '../../../src/joi-to-zod/rules/joi-check-to-enum';
 
-test.skip('Joi check to Zod enum', async () => {
+test('Joi check to Zod enum', async () => {
   const source = `
 import Joi from 'joi';
 
@@ -31,6 +31,6 @@ export const employee = Joi.object().keys({
   expect(modifications.report.changesApplied).toBe(1);
   expect(modifications.history.length).toBe(2);
   expect(updatedSource).not.toContain('check');
-  expect(updatedSource).toContain('job: z.enum(Object.values(Job) as [Job, ...Job[]])');
+  expect(updatedSource).toContain('job: Joi.string().enum([...Object.values(Job) as [string, ...Array<string>]])');
   expect(updatedSource).toMatchSnapshot();
 });

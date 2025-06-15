@@ -2,22 +2,24 @@ import type { SgNode } from '@ast-grep/napi';
 import type { Kinds, TypesMap } from '@ast-grep/napi/types/staticTypes';
 
 import type { JoiPrimitives } from '../types';
-import getJoiImport, { JOI_IMPORT_META_IDENTIFIER } from './get-joi-import';
 import traverseUp from '../../utils/traverse-up';
+import extractNameFromCallExpression from '../../utils/extract-name-from-call-expression';
+import getJoiIdentifierName from './get-joi-identifier-name';
 
 function getJoiProperties(
   root: SgNode<TypesMap, Kinds<TypesMap>>,
   params: { primitive?: JoiPrimitives; validationName?: string },
 ): Array<SgNode<TypesMap, Kinds<TypesMap>>> {
-  const joiImportIdentifierName = getJoiImport(root)?.getMatch(JOI_IMPORT_META_IDENTIFIER)?.text();
+  const joiImportIdentifierName = getJoiIdentifierName(root);
   if (joiImportIdentifierName == null) return [];
 
   let propertyIdentifiers = root.findAll({ rule: { kind: 'property_identifier' } });
   if (propertyIdentifiers.length === 0) return [];
 
-  if (params.validationName != null) {
+  const validationName = extractNameFromCallExpression(params.validationName);
+  if (validationName != null) {
     propertyIdentifiers = propertyIdentifiers.filter(
-      propertyIdentifier => propertyIdentifier.text() === params.validationName,
+      propertyIdentifier => propertyIdentifier.text() === validationName,
     );
   }
 

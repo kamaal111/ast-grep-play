@@ -1,10 +1,38 @@
 import type { Modifications } from '../../types';
 import commitEditModifications from '../../utils/commit-edit-modifications';
+import extractArgsFromCallExpression from '../../utils/extract-args-from-call-expression';
+import getJoiIdentifierName from '../utils/get-joi-identifier-name';
+import getJoiPrimitive from '../utils/get-joi-primitive';
+import getJoiProperties from '../utils/get-joi-properties';
 
 async function joiCheckToEnum(modifications: Modifications): Promise<Modifications> {
   const root = modifications.ast.root();
+  const joiImportIdentifierName = getJoiIdentifierName(root);
+  if (joiImportIdentifierName == null) return modifications;
 
-  return commitEditModifications([], modifications);
+  const edits = getJoiProperties(root, { primitive: '*', validationName: 'valid($ARGS)' })
+    .map(property => {
+      const primitive = getJoiPrimitive(property, joiImportIdentifierName);
+      if (primitive == null) return null;
+
+      const propertyComponents = property.text().split('.');
+      const validIndex = propertyComponents.findIndex(component => component.startsWith('valid'));
+      if (validIndex === -1) return null;
+
+      const validProperty = propertyComponents.slice(validIndex).join('.');
+      const validPropertyArgs = extractArgsFromCallExpression(validProperty);
+      if (validPropertyArgs == null) return null;
+
+      const replacement = property
+        .text()
+        .replace(validPropertyArgs, `[${validPropertyArgs} as [${primitive}, ...Array<${primitive}>]]`)
+        .replace('.valid', '.enum');
+
+      return property.replace(replacement);
+    })
+    .filter(edit => edit != null);
+
+  return commitEditModifications(edits, modifications);
 }
 
 export default joiCheckToEnum;

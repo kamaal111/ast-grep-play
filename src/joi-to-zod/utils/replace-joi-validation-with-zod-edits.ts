@@ -1,21 +1,26 @@
 import type { Edit, SgNode } from '@ast-grep/napi';
 import type { Kinds, TypesMap } from '@ast-grep/napi/types/staticTypes';
 
-import getJoiImport, { JOI_IMPORT_META_IDENTIFIER } from './get-joi-import';
 import type { JoiPrimitives } from '../types';
 import type { Optional } from '../../types';
 import getJoiProperties from './get-joi-properties';
+import extractNameFromCallExpression from '../../utils/extract-name-from-call-expression';
+import getJoiIdentifierName from './get-joi-identifier-name';
+import extractArgsFromCallExpression from '../../utils/extract-args-from-call-expression';
 
 function replaceJoiValidationWithZodEdits(
   root: SgNode<TypesMap, Kinds<TypesMap>>,
   params: { primitive: JoiPrimitives; validationTargetKey: string; zodValidation: Optional<string> },
 ): Array<Edit> {
-  const joiImportIdentifierName = getJoiImport(root)?.getMatch(JOI_IMPORT_META_IDENTIFIER)?.text();
+  const joiImportIdentifierName = getJoiIdentifierName(root);
   if (joiImportIdentifierName == null) return [];
 
-  const validationTargetKeyComponents = params.validationTargetKey.split('(');
-  const validationTargetKeyName = validationTargetKeyComponents[0];
-  const validationTargetKeyArgs = validationTargetKeyComponents.slice(1).join('').slice(undefined, -1);
+  const validationTargetKeyName = extractNameFromCallExpression(params.validationTargetKey);
+  if (validationTargetKeyName == null) return [];
+
+  const validationTargetKeyArgs = extractArgsFromCallExpression(params.validationTargetKey);
+  if (validationTargetKeyArgs == null) return [];
+
   const validationTargetKeyArgsIsMeta = validationTargetKeyArgs.startsWith('$');
   const shouldRemoveValidation = params.zodValidation == null;
   let zodReplacement = shouldRemoveValidation ? '' : `.${params.zodValidation}`;
@@ -23,7 +28,7 @@ function replaceJoiValidationWithZodEdits(
   const zodReplacementName = zodReplacementComponents[0];
   const zodReplacementArgs = zodReplacementComponents.slice(1).join('').slice(undefined, -1);
 
-  return getJoiProperties(root, { primitive: params.primitive, validationName: validationTargetKeyName }).map(
+  return getJoiProperties(root, { primitive: params.primitive, validationName: params.validationTargetKey }).map(
     callExpression => {
       const callExpressionText = callExpression.text();
 
