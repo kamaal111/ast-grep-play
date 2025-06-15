@@ -1,5 +1,0 @@
-id: joi-string-alphanum-to-regex
-language: TypeScript
-rule:
-  pattern: Joi.string().alphanum()
-fix: z.string().regex(/^[a-z0-9]+$/)

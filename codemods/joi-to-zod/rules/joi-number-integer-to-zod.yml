@@ -1,5 +1,0 @@
-id: joi-number-integer-to-zod
-language: TypeScript
-rule:
-  pattern: $J.number().integer()
-fix: z.number().int()

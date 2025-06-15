@@ -1,8 +1,0 @@
-id: joi-reference-to-zod
-valid:
-  - const schema = z.string();
-  - const schema = z.object()
-invalid:
-  - const schema = Joi.string();
-  - const schema = Joi.object()
-  - Joi.number()

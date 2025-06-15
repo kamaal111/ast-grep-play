@@ -1,3 +1,0 @@
-id: joi-string-alphanum-to-regex
-invalid:
-  - Joi.string().alphanum()

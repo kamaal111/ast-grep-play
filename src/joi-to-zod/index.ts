@@ -12,6 +12,7 @@ import joiDescriptionToZod from './rules/joi-description-to-zod';
 import joiReferenceToZod from './rules/joi-reference-to-zod';
 import joiCheckToEnum from './rules/joi-check-to-enum';
 import joiRemoveImport from './rules/joi-remove-import';
+import joiRemovePrimitiveForEnum from './rules/joi-remove-primitive-for-enum';
 
 export async function joiToZodModifications(modifications: Modifications): Promise<Modifications> {
   if (!hasJoiImport(modifications.ast.root())) return modifications;
@@ -22,6 +23,7 @@ export async function joiToZodModifications(modifications: Modifications): Promi
     .then(joiDescriptionToZod)
     .then(joiRemoveRequired)
     .then(joiCheckToEnum)
+    .then(joiRemovePrimitiveForEnum)
     .then(joiReferenceToZod)
     .then(joiRemoveImport);
 }

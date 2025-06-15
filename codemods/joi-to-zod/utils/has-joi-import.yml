@@ -1,6 +1,0 @@
-id: has-joi-import
-language: TypeScript
-rule:
-  any:
-    - pattern: import $J from 'joi'
-    - pattern: import $J from "joi"

@@ -1,5 +1,0 @@
-id: joi-description-to-zod
-language: TypeScript
-rule:
-  pattern: $SCHEMA.description($ARGS)
-fix: $SCHEMA.describe($ARGS)

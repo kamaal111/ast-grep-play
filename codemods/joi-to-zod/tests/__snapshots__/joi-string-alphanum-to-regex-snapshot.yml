@@ -1,9 +1,0 @@
-id: joi-string-alphanum-to-regex
-snapshots:
-  Joi.string().alphanum():
-    fixed: z.string().regex(/^[a-z0-9]+$/)
-    labels:
-    - source: Joi.string().alphanum()
-      style: primary
-      start: 0
-      end: 23
