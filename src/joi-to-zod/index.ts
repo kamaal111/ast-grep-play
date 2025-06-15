@@ -1,6 +1,6 @@
-import { parseAsync, type SgRoot } from '@ast-grep/napi';
+import { parseAsync, type SgNode, type SgRoot } from '@ast-grep/napi';
 import type { NapiLang } from '@ast-grep/napi/types/lang';
-import type { TypesMap } from '@ast-grep/napi/types/staticTypes';
+import type { Kinds, TypesMap } from '@ast-grep/napi/types/staticTypes';
 
 import type { Modifications, Optional } from '../types';
 import zodAddImport from './rules/zod-add-import';
@@ -15,11 +15,18 @@ import joiRemoveImport from './rules/joi-remove-import';
 import joiRemovePrimitiveForEnum from './rules/joi-remove-primitive-for-enum';
 import joiObjectKeysUnnest from './rules/joi-object-keys-unnest';
 import joiAddOptional from './rules/joi-add-optional';
+import joiRemoveOptionsFromRegex from './rules/joi-remove-options-from-regex';
+
+function joiToZodFilter(root: SgNode<TypesMap, Kinds<TypesMap>>): boolean {
+  return hasJoiImport(root);
+}
 
 export async function joiToZodModifications(modifications: Modifications): Promise<Modifications> {
-  if (!hasJoiImport(modifications.ast.root())) return modifications;
+  const root = modifications.ast.root();
+  if (!joiToZodFilter(root)) return modifications;
 
   return zodAddImport(modifications)
+    .then(joiRemoveOptionsFromRegex)
     .then(joiStringAlphanumToRegex)
     .then(joiNumberIntegerToZod)
     .then(joiDescriptionToZod)
@@ -32,7 +39,8 @@ export async function joiToZodModifications(modifications: Modifications): Promi
     .then(joiRemoveImport);
 }
 
-export async function joiToZod(lang: NapiLang, ast: SgRoot<TypesMap>): Promise<SgRoot<TypesMap>> {
+export async function joiToZod(lang: NapiLang, content: SgRoot<TypesMap> | string): Promise<SgRoot<TypesMap>> {
+  const ast = typeof content === 'string' ? await parseAsync(lang, content) : content;
   const modifications = await joiToZodModifications({
     lang,
     report: { changesApplied: 0 },

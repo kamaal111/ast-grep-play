@@ -21,7 +21,7 @@ function replaceJoiValidationWithZodEdits(
   const validationTargetKeyArgs = extractArgsFromCallExpression(params.validationTargetKey);
   if (validationTargetKeyArgs == null) return [];
 
-  const validationTargetKeyArgsIsMeta = validationTargetKeyArgs.startsWith('$');
+  const validationTargetKeyArgsIsMeta = validationTargetKeyArgs.includes('$');
   const shouldRemoveValidation = params.zodValidation == null;
   let zodReplacement = shouldRemoveValidation ? '' : `.${params.zodValidation}`;
   const zodReplacementComponents = zodReplacement.split('(');
@@ -44,6 +44,28 @@ function replaceJoiValidationWithZodEdits(
           if (foundArguments != null) {
             if (validationTargetKeyArgs === zodReplacementArgs) {
               finalZodReplacementArgs = foundArguments;
+            } else {
+              const foundArgumentsComponents = foundArguments.split(',').map(arg => arg.trim());
+              const metaMapping = validationTargetKeyArgs
+                .split(',')
+                .map(arg => arg.trim())
+                .reduce<Record<string, string>>((acc, meta, index) => {
+                  if (!meta.startsWith('$')) return acc;
+
+                  const foundArgument = foundArgumentsComponents[index];
+                  if (foundArgument == null) return acc;
+
+                  return { ...acc, [meta]: foundArgument };
+                }, {});
+              finalZodReplacementArgs = zodReplacementArgs
+                .split(',')
+                .map(arg => {
+                  const trimmed = arg.trim();
+                  if (!trimmed.startsWith('$')) return arg;
+
+                  return metaMapping[trimmed] ?? arg;
+                })
+                .join(',');
             }
 
             finalValidationTargetKeyArgs = foundArguments;
@@ -55,7 +77,6 @@ function replaceJoiValidationWithZodEdits(
         'g',
       );
       const finalZodReplacement = shouldRemoveValidation ? '' : `${zodReplacementName}(${finalZodReplacementArgs})`;
-
       const replacement = callExpressionText
         .replace(finalValidationTargetKey, finalZodReplacement)
         .split('\n')
