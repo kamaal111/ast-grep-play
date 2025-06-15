@@ -23,13 +23,13 @@ function getJoiProperties(
     );
   }
 
-  return propertyIdentifiers
-    .map(propertyIdentifier => {
+  return propertyIdentifiers.reduce<{ results: Array<SgNode<TypesMap, Kinds<TypesMap>>>; checkedIn: Set<string> }>(
+    (acc, propertyIdentifier) => {
       const pairNode = traverseUp(propertyIdentifier, node => node.kind() === 'pair');
-      if (pairNode == null) return null;
+      if (pairNode == null) return acc;
 
       const memberExpression = pairNode.find({ rule: { kind: 'member_expression' } });
-      if (memberExpression == null) return null;
+      if (memberExpression == null) return acc;
 
       const memberExpressionText = memberExpression.text().trim();
       if (
@@ -38,16 +38,23 @@ function getJoiProperties(
           params.primitive !== '*' ||
           !memberExpressionText.includes(`.${params.primitive}()`))
       ) {
-        return null;
+        return acc;
       }
 
       const callExpression = memberExpression.parent();
-      if (callExpression == null) return null;
+      if (callExpression == null) return acc;
       if (callExpression.kind() !== 'call_expression') throw new Error('Unexpected kind found');
 
-      return callExpression;
-    })
-    .filter(callExpression => callExpression != null);
+      const callExpressionText = callExpression.text();
+      if (acc.checkedIn.has(callExpressionText)) return acc;
+
+      acc.results.push(callExpression);
+      acc.checkedIn.add(callExpressionText);
+
+      return acc;
+    },
+    { results: [], checkedIn: new Set([]) },
+  ).results;
 }
 
 export default getJoiProperties;

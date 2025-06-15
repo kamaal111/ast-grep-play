@@ -15,7 +15,7 @@ async function joiObjectKeysUnnest(modifications: Modifications): Promise<Modifi
       const objectSchema = node.getMatch(ARGS_META_IDENTIFIER);
       if (objectSchema == null) return null;
 
-      return node.replace(`${joiImportIdentifierName}.object(${objectSchema.text()})`);
+      return node.replace(`${joiImportIdentifierName}.object(${objectSchema.text()}).strict()`);
     })
     .filter(edit => edit != null);
 

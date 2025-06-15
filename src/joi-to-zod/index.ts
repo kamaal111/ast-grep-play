@@ -2,8 +2,8 @@ import { parseAsync, type SgRoot } from '@ast-grep/napi';
 import type { NapiLang } from '@ast-grep/napi/types/lang';
 import type { TypesMap } from '@ast-grep/napi/types/staticTypes';
 
-import zodAddImport from './rules/zod-add-import';
 import type { Modifications, Optional } from '../types';
+import zodAddImport from './rules/zod-add-import';
 import joiStringAlphanumToRegex from './rules/joi-string-alphanum-to-regex';
 import hasJoiImport from './utils/has-joi-import';
 import joiRemoveRequired from './rules/joi-remove-required';
@@ -14,6 +14,7 @@ import joiCheckToEnum from './rules/joi-check-to-enum';
 import joiRemoveImport from './rules/joi-remove-import';
 import joiRemovePrimitiveForEnum from './rules/joi-remove-primitive-for-enum';
 import joiObjectKeysUnnest from './rules/joi-object-keys-unnest';
+import joiAddOptional from './rules/joi-add-optional';
 
 export async function joiToZodModifications(modifications: Modifications): Promise<Modifications> {
   if (!hasJoiImport(modifications.ast.root())) return modifications;
@@ -22,10 +23,11 @@ export async function joiToZodModifications(modifications: Modifications): Promi
     .then(joiStringAlphanumToRegex)
     .then(joiNumberIntegerToZod)
     .then(joiDescriptionToZod)
-    .then(joiRemoveRequired)
     .then(joiCheckToEnum)
     .then(joiRemovePrimitiveForEnum)
     .then(joiObjectKeysUnnest)
+    .then(joiAddOptional)
+    .then(joiRemoveRequired)
     .then(joiReferenceToZod)
     .then(joiRemoveImport);
 }

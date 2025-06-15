@@ -1,19 +1,20 @@
 import { test, expect } from 'vitest';
 import { Lang, parseAsync } from '@ast-grep/napi';
 
-import joiObjectKeysUnnest from '../../../src/joi-to-zod/rules/joi-object-keys-unnest';
+import joiAddOptional from '../../../src/joi-to-zod/rules/joi-add-optional';
 
-test('Joi unnest object', async () => {
+test('Joi add optional', async () => {
   const source = `
 import Joi from 'joi';
 
 export const employee = Joi.object().keys({
   name: Joi.string().alphanum().min(3).max(30).required(),
+  birthyear: Joi.number().integer().min(1970).max(2013),
 });
 `;
   const ast = await parseAsync(Lang.TypeScript, source);
 
-  const modifications = await joiObjectKeysUnnest({
+  const modifications = await joiAddOptional({
     ast,
     report: { changesApplied: 0 },
     lang: Lang.TypeScript,
@@ -24,8 +25,7 @@ export const employee = Joi.object().keys({
 
   expect(modifications.report.changesApplied).toBe(1);
   expect(modifications.history.length).toBe(2);
-  expect(updatedSource).not.toContain('keys');
-  expect(updatedSource).toContain('Joi.object({');
-  expect(updatedSource).toContain('}).strict()');
+  expect(updatedSource).not.toContain('required().optional');
+  expect(updatedSource).toContain('birthyear: Joi.number().integer().min(1970).max(2013).optional()');
   expect(updatedSource).toMatchSnapshot();
 });
