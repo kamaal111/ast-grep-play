@@ -11,6 +11,7 @@ import joiNumberIntegerToZod from './rules/joi-number-integer-to-zod';
 import joiDescriptionToZod from './rules/joi-description-to-zod';
 import joiReferenceToZod from './rules/joi-reference-to-zod';
 import joiCheckToEnum from './rules/joi-check-to-enum';
+import joiRemoveImport from './rules/joi-remove-import';
 
 export async function joiToZodModifications(modifications: Modifications): Promise<Modifications> {
   if (!hasJoiImport(modifications.ast.root())) return modifications;
@@ -21,7 +22,8 @@ export async function joiToZodModifications(modifications: Modifications): Promi
     .then(joiDescriptionToZod)
     .then(joiRemoveRequired)
     .then(joiCheckToEnum)
-    .then(joiReferenceToZod);
+    .then(joiReferenceToZod)
+    .then(joiRemoveImport);
 }
 
 export async function joiToZod(lang: NapiLang, ast: SgRoot<TypesMap>): Promise<SgRoot<TypesMap>> {

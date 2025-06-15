@@ -1,9 +1,9 @@
 import { test, expect } from 'vitest';
 import { Lang, parseAsync } from '@ast-grep/napi';
 
-import joiCheckToEnum from '../../../src/joi-to-zod/rules/joi-check-to-enum';
+import joiRemoveImport from '../../../src/joi-to-zod/rules/joi-remove-import';
 
-test.skip('Joi check to Zod enum', async () => {
+test('Joi remove import', async () => {
   const source = `
 import Joi from 'joi';
 
@@ -19,7 +19,7 @@ export const employee = Joi.object().keys({
 `;
   const ast = await parseAsync(Lang.TypeScript, source);
 
-  const modifications = await joiCheckToEnum({
+  const modifications = await joiRemoveImport({
     ast,
     report: { changesApplied: 0 },
     lang: Lang.TypeScript,
@@ -30,7 +30,6 @@ export const employee = Joi.object().keys({
 
   expect(modifications.report.changesApplied).toBe(1);
   expect(modifications.history.length).toBe(2);
-  expect(updatedSource).not.toContain('check');
-  expect(updatedSource).toContain('job: z.enum(Object.values(Job) as [Job, ...Job[]])');
+  expect(updatedSource).not.toContain("import Joi from 'joi';");
   expect(updatedSource).toMatchSnapshot();
 });
