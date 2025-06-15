@@ -26,8 +26,8 @@ async function parseAndTransformFiles(
         const { ast, report } = await transformer(lang, content, filepath);
         if (report.changesApplied > 0) {
           await fs.writeFile(filepath, ast.root().text());
+          console.log(`🚀 finished '${transformerName}'`, { filename: filepath, report });
         }
-        console.log(`🚀 finished '${transformerName}'`, { filename: filepath, report });
       } catch (error) {
         console.error(`❌ '${transformerName}' failed to parse file`, error);
       }
